@@ -30,6 +30,11 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install --user buildozer cython
 
+      - name: Install Android SDK Build Tools using sdkmanager
+         run: |
+           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;34.0.0"
+           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools"     
+
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin
