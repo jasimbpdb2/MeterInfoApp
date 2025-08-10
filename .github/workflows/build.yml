@@ -1,4 +1,4 @@
-name: Build Android APK (API 35)
+name: Build Android APK (API 35) with Buildozer
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-      ANDROID_NDK_HOME: /usr/local/lib/android/ndk/27.0.12077973
+      ANDROID_NDK_HOME: /usr/local/lib/android/ndk/26.1.10909125
 
     steps:
       - name: Checkout Repository
@@ -47,10 +47,9 @@ jobs:
         run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
-            "platform-tools" \
-            "build-tools;35.0.0" \
+            "build-tools;35.0.0-rc2" \
             "platforms;android-35" \
-            "ndk;27.0.12077973"
+            "ndk;26.1.10909125"
 
       - name: Build APK
         run: |
