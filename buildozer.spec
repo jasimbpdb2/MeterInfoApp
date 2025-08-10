@@ -27,7 +27,7 @@ orientation = portrait
 fullscreen = 1
 
 # (str) Supported Android SDK version
-android.api = 36
+android.api = 35
 
 # (str) Android NDK version to use
 android.ndk = 25b
