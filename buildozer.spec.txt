@@ -1,0 +1,470 @@
+[app]
+# (str) Title of your application
+title = BPDB Token Checker
+
+# (str) Package name
+package.name = tokenchecker
+
+# (str) Package domain (used for the android package)
+package.domain = org.example
+
+# (str) Source code where the main.py lives
+source.dir = .
+
+# (str) The main .py file to launch your app
+source.main = token_checker_kivy.py
+
+# (list) List of inclusions using pattern matching
+source.include_exts = py,png,jpg,kv,atlas
+
+# (str) Application version
+version = 1.0
+
+# (str) Application version code (increment for each new release)
+version.code = 1
+
+# (str) Supported orientation (portrait, landscape, sensor)
+orientation = portrait
+
+# (list) List of service to declare
+#services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
+
+# (str) Icon of the application
+# icon.filename = %(source.dir)s/icon.png
+
+# (str) Supported permissions (comma-separated)
+# permissions = INTERNET
+
+# (list) Supported permissions (one per line)
+android.permissions = INTERNET
+
+# (list) Application requirements
+requirements = python3,kivy,requests,urllib3
+
+# (str) Custom source folders for requirements
+# (Separate multiple paths with commas)
+# requirements.source =
+
+# (str) Android entry point, default is ok
+android.entrypoint = org.kivy.android.PythonActivity
+
+# (str) Android app theme
+# android.theme = "@android:style/Theme.NoTitleBar"
+
+# (str) Additional Java jars to add to the libs dir
+# android.add_jars = path/to/your.jar
+
+# (list) Gradle dependencies to add (comma-separated)
+# android.gradle_dependencies = 
+
+# (list) Gradle repositories to add (comma-separated)
+# android.gradle_repositories =
+
+# (bool) Indicate if the application should be fullscreen
+fullscreen = 0
+
+# (str) Android NDK version to use
+android.ndk = 25b
+
+# (int) Android API to use
+android.api = 33
+
+# (int) Minimum API your APK will support
+android.minapi = 21
+
+# (str) Android target architecture
+android.arch = armeabi-v7a, arm64-v8a
+
+# (bool) Enable Android logcat
+logcat = 1
+
+# (str) Python for android branch to use
+# p4a.branch = master
+
+# (bool) Copy library instead of making a libpymodules.so
+# android.copy_libs = 1
+
+# (str) Path to a custom build script
+# custom_builds_dir = 
+
+# (bool) Launch app automatically after installation
+# auto_launch = 1
+
+# (str) List of Java classes to add (comma-separated)
+# android.add_classes =
+
+# (list) List of Java AARs to add (comma-separated)
+# android.add_aars =
+
+# (list) List of environment variables to pass
+# (Use ‘key=value’ format, one per line.)
+# environment_variables =
+
+# (str) Name of the bootstrap to use for python-for-android
+# pythonforandroid.bootstrap = sdl2
+
+# (str) Path to a custom manifest file
+# android.manifest =
+
+# (str) Android theme to use
+# android.theme = "@android:style/Theme.NoTitleBar"
+
+# (list) Additional source folders to include (comma-separated)
+# android.add_src =
+
+# (list) Additional Python files to include (comma-separated)
+# android.add_python_modules =
+
+# (list) Additional files to copy (comma-separated)
+# android.add_assets =
+
+# (list) Java compile options (comma-separated)
+# android.javac_options =
+
+# (str) Custom Java source code directory (comma-separated)
+# android.java_src =
+
+# (str) Directory containing Android resources
+# android.res_dir =
+
+# (str) Directory containing Android assets
+# android.assets_dir =
+
+# (list) Application meta-data to set (key=value format)
+# android.meta_data =
+
+# (list) Native libraries to copy (comma-separated)
+# android.add_native_libs =
+
+# (list) Additional shared libraries to copy (comma-separated)
+# android.add_shared_libs =
+
+# (list) Shared libraries to exclude (comma-separated)
+# android.exclude_shared_libs =
+
+# (str) Path to a custom packaging command
+# android.packaging_cmd =
+
+# (bool) Indicate if the app should use JNI logging
+# android.jni_log = 0
+
+# (bool) Sign the APK
+# android.sign = 1
+
+# (str) Path to the keystore file
+# android.keystore = mykeystore.keystore
+
+# (str) Password for the keystore
+# android.keystore_password = password
+
+# (str) Key alias to use
+# android.keyalias = myalias
+
+# (str) Key alias password
+# android.keyalias_password = password
+
+# (list) Patterns to whitelist for network access
+# network.whitelist = *
+
+# (list) Patterns to blacklist for network access
+# network.blacklist =
+
+# (str) Custom java package
+# android.custom_package =
+
+# (list) Whitelisted permissions (comma-separated)
+# android.whitelist_permissions =
+
+# (str) Path to Android Studio project directory
+# android.studio_dir =
+
+# (list) Java classes to exclude
+# android.exclude_java_classes =
+
+# (list) Source modules to exclude
+# android.exclude_source_modules =
+
+# (bool) Use Android's native log instead of stdout
+# android.log_to_stdout = 0
+
+# (str) Path to a custom splash screen
+# android.splash_screen =
+
+# (int) Splash screen duration (seconds)
+# android.splash_duration = 3
+
+# (bool) Keep build artifacts for debugging
+# android.keep_build_dir = 0
+
+# (str) Path to custom Java classpath (comma-separated)
+# android.custom_javaclasspath =
+
+# (list) List of environment variables to pass to gradle
+# (Use ‘key=value’ format, one per line.)
+# gradle_environment =
+
+# (list) Additional packaging options for Gradle
+# gradle.packaging_options =
+
+# (str) Python version to use
+# python.version = 3
+
+# (str) Path to Python interpreter to use
+# python.interpreter =
+
+# (list) Requirements to install using pip
+# requirements.pip =
+
+# (str) Directory to store prebuilt .apk and .aab files
+# android.release_dir =
+
+# (list) Additional .so libraries to copy (comma-separated)
+# android.add_libs =
+
+# (list) Additional shared libraries to copy (comma-separated)
+# android.add_shared_libs =
+
+# (list) Whitelisted permissions (comma-separated)
+# android.whitelist_permissions =
+
+# (list) Excluded permissions (comma-separated)
+# android.exclude_permissions =
+
+# (list) Optional dependencies to install
+# requirements.optional =
+
+[app]
+# (str) Title of your application
+title = BPDB Token Checker
+
+# (str) Package name
+package.name = tokenchecker
+
+# (str) Package domain (used for the android package)
+package.domain = org.example
+
+# (str) Source code where the main.py lives
+source.dir = .
+
+# (str) The main .py file to launch your app
+source.main = token_checker_kivy.py
+
+# (list) List of inclusions using pattern matching
+source.include_exts = py,png,jpg,kv,atlas
+
+# (str) Application version
+version = 1.0
+
+# (str) Application version code (increment for each new release)
+version.code = 1
+
+# (str) Supported orientation (portrait, landscape, sensor)
+orientation = portrait
+
+# (list) List of service to declare
+#services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
+
+# (str) Icon of the application
+# icon.filename = %(source.dir)s/icon.png
+
+# (str) Supported permissions (comma-separated)
+# permissions = INTERNET
+
+# (list) Supported permissions (one per line)
+android.permissions = INTERNET
+
+# (list) Application requirements
+requirements = python3,kivy,requests,urllib3
+
+# (str) Custom source folders for requirements
+# (Separate multiple paths with commas)
+# requirements.source =
+
+# (str) Android entry point, default is ok
+android.entrypoint = org.kivy.android.PythonActivity
+
+# (str) Android app theme
+# android.theme = "@android:style/Theme.NoTitleBar"
+
+# (str) Additional Java jars to add to the libs dir
+# android.add_jars = path/to/your.jar
+
+# (list) Gradle dependencies to add (comma-separated)
+# android.gradle_dependencies = 
+
+# (list) Gradle repositories to add (comma-separated)
+# android.gradle_repositories =
+
+# (bool) Indicate if the application should be fullscreen
+fullscreen = 0
+
+# (str) Android NDK version to use
+android.ndk = 25b
+
+# (int) Android API to use
+android.api = 33
+
+# (int) Minimum API your APK will support
+android.minapi = 21
+
+# (str) Android target architecture
+android.arch = armeabi-v7a, arm64-v8a
+
+# (bool) Enable Android logcat
+logcat = 1
+
+# (str) Python for android branch to use
+p4a.branch = develop
+
+# (bool) Copy library instead of making a libpymodules.so
+# android.copy_libs = 1
+
+# (str) Path to a custom build script
+# custom_builds_dir = 
+
+# (bool) Launch app automatically after installation
+# auto_launch = 1
+
+# (str) List of Java classes to add (comma-separated)
+# android.add_classes =
+
+# (list) List of Java AARs to add (comma-separated)
+# android.add_aars =
+
+# (list) List of environment variables to pass
+# (Use ‘key=value’ format, one per line.)
+# environment_variables =
+
+# (str) Name of the bootstrap to use for python-for-android
+# pythonforandroid.bootstrap = sdl2
+
+# (str) Path to a custom manifest file
+# android.manifest =
+
+# (str) Android theme to use
+# android.theme = "@android:style/Theme.NoTitleBar"
+
+# (list) Additional source folders to include (comma-separated)
+# android.add_src =
+
+# (list) Additional Python files to include (comma-separated)
+# android.add_python_modules =
+
+# (list) Additional files to copy (comma-separated)
+# android.add_assets =
+
+# (list) Java compile options (comma-separated)
+# android.javac_options =
+
+# (str) Custom Java source code directory (comma-separated)
+# android.java_src =
+
+# (str) Directory containing Android resources
+# android.res_dir =
+
+# (str) Directory containing Android assets
+# android.assets_dir =
+
+# (list) Application meta-data to set (key=value format)
+# android.meta_data =
+
+# (list) Native libraries to copy (comma-separated)
+# android.add_native_libs =
+
+# (list) Additional shared libraries to copy (comma-separated)
+# android.add_shared_libs =
+
+# (list) Shared libraries to exclude (comma-separated)
+# android.exclude_shared_libs =
+
+# (str) Path to a custom packaging command
+# android.packaging_cmd =
+
+# (bool) Indicate if the app should use JNI logging
+# android.jni_log = 0
+
+# (bool) Sign the APK
+# android.sign = 1
+
+# (str) Path to the keystore file
+# android.keystore = mykeystore.keystore
+
+# (str) Password for the keystore
+# android.keystore_password = password
+
+# (str) Key alias to use
+# android.keyalias = myalias
+
+# (str) Key alias password
+# android.keyalias_password = password
+
+# (list) Patterns to whitelist for network access
+# network.whitelist = *
+
+# (list) Patterns to blacklist for network access
+# network.blacklist =
+
+# (str) Custom java package
+# android.custom_package =
+
+# (list) Whitelisted permissions (comma-separated)
+# android.whitelist_permissions =
+
+# (str) Path to Android Studio project directory
+# android.studio_dir =
+
+# (list) Java classes to exclude
+# android.exclude_java_classes =
+
+# (list) Source modules to exclude
+# android.exclude_source_modules =
+
+# (bool) Use Android's native log instead of stdout
+# android.log_to_stdout = 0
+
+# (str) Path to a custom splash screen
+# android.splash_screen =
+
+# (int) Splash screen duration (seconds)
+# android.splash_duration = 3
+
+# (bool) Keep build artifacts for debugging
+# android.keep_build_dir = 0
+
+# (str) Path to custom Java classpath (comma-separated)
+# android.custom_javaclasspath =
+
+# (list) List of environment variables to pass to gradle
+# (Use ‘key=value’ format, one per line.)
+# gradle_environment =
+
+# (list) Additional packaging options for Gradle
+# gradle.packaging_options =
+
+# (str) Python version to use
+# python.version = 3
+
+# (str) Path to Python interpreter to use
+# python.interpreter =
+
+# (list) Requirements to install using pip
+# requirements.pip =
+
+# (str) Directory to store prebuilt .apk and .aab files
+# android.release_dir =
+
+# (list) Additional .so libraries to copy (comma-separated)
+# android.add_libs =
+
+# (list) Additional shared libraries to copy (comma-separated)
+# android.add_shared_libs =
+
+# (list) Whitelisted permissions (comma-separated)
+# android.whitelist_permissions =
+
+# (list) Excluded permissions (comma-separated)
+# android.exclude_permissions =
+
+# (list) Optional dependencies to install
+# requirements.optional =
+
