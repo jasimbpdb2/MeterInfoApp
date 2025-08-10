@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (API 35)
 
 on:
   push:
@@ -37,21 +37,29 @@ jobs:
       - name: Install Buildozer and Cython
         run: |
           python3 -m pip install --upgrade pip
-          pip install --user buildozer cython
+          pip install --user git+https://github.com/kivy/buildozer.git
+          pip install --user cython
 
       - name: Configure Android SDK
         run: |
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
+            "platform-tools" \
+            "build-tools;35.0.0" \
+            "platforms;android-35" \
+            "ndk;26.1.10909125" --channel=3
 
       - name: Build APK
         run: |
-          echo "android.build_tools = 34.0.0" >> buildozer.spec
+          sed -i 's/^android.api = .*/android.api = 35/' buildozer.spec
+          sed -i 's/^android.build_tools = .*/android.build_tools = 35.0.0/' buildozer.spec
+          sed -i 's/^android.ndk = .*/android.ndk = 26.1.10909125/' buildozer.spec
+          
           export PATH="$HOME/.local/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
           buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-kivy-app-debug-apk
+          name: android-35-app-debug-apk
           path: bin/*.apk
