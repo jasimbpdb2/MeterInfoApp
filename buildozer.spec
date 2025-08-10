@@ -8,8 +8,8 @@ source.dir = .
 # API & Build Tools
 android.api = 35
 android.minapi = 23
-android.build_tools = 35.0.0
-android.ndk = 27.0.12077973
+android.build_tools = 35.0.0-rc2
+android.ndk = 26.1.10909125
 android.ndk_api = 23
 
 # Remove ROOT substitutions — we'll set these in GitHub Actions env
