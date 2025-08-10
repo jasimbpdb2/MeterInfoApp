@@ -28,6 +28,9 @@ fullscreen = 1
 
 # (str) Supported Android SDK version
 android.api = 35
+android.sdk_path = %(ANDROID_SDK_ROOT)s
+android.ndk_path = %(ANDROID_NDK_ROOT)s
+android.build_tools = 34.0.0
 
 # (str) Android NDK version to use
 android.ndk = 25b
@@ -37,4 +40,4 @@ android.minapi = 21
 
 # (str) Android entry point
 entrypoint = main.py
-android.build_tools_version = 34.0.0  
+ 
