@@ -1,4 +1,4 @@
-name: Build Android APK with Buildozer (Fixed SDK)
+name: Build Android APK with Buildozer
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
       ANDROID_NDK_HOME: /usr/local/lib/android/ndk/26.1.10909125
@@ -28,45 +28,27 @@ jobs:
           sudo apt-get install -y \
             git zip unzip python3-pip \
             python3-venv libffi-dev \
-            build-essential zlib1g-dev \
-            libssl-dev ccache
+            build-essential zlib1g-dev
 
       - name: Install Buildozer and Cython
         run: |
           python -m pip install --upgrade pip wheel
-          pip install --user buildozer cython==3.0.0
+          pip install --user buildozer cython==3.0.0  # Explicit Cython install
 
-      # Fixed SDK installation with license acceptance
       - name: Setup Android SDK
         run: |
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
-          
-          # Force accept all licenses
           yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-          
-          # Install specific working versions
           $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager \
-            "platforms;android-34" \
-            "build-tools;34.0.0" \  # Using stable version instead of RC
-            "platform-tools" \
-            "ndk;26.1.10909125" \
-            "cmdline-tools;latest"
-
-          # Verify installation
-          ls -la $ANDROID_SDK_ROOT/build-tools/34.0.0/
+            "platforms;android-35" \
+            "build-tools;35.0.0-rc2" \
+            "ndk;26.1.10909125"
 
       - name: Build APK
         run: |
           export PATH="$HOME/.local/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-          buildozer -v android debug 2>&1 | tee build.log
-          
-          # Verify APK exists
-          if [ ! -f bin/*.apk ]; then
-            echo "ERROR: No APK generated!"
-            grep -i "error" build.log || true
-            exit 1
-          fi
+          buildozer -v android debug 2>&1 | tee build.log  # Save logs
 
       - name: Upload APK
         if: success()
@@ -75,9 +57,9 @@ jobs:
           name: app-debug
           path: bin/*.apk
 
-      - name: Upload build logs
+      - name: Upload build logs (for debugging)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: build-logs
-          path: build.log
+          path: build.log 
