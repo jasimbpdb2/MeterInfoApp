@@ -3,6 +3,7 @@
 title = MyApp
 package.name = myapp
 package.domain = org.example
+version = 1.0.0
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 
