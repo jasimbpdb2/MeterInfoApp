@@ -1,6 +1,8 @@
 [app]
 # (str) Title of your application
 title = MeterInfoApp
+source.dir = .
+version = 0.1
 
 # (str) Package name
 package.name = meterinfoapp
