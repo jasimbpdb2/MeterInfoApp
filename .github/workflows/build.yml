@@ -22,24 +22,22 @@ jobs:
           sudo apt update
           sudo apt install -y \
             git zip unzip openjdk-17-jdk python3-pip python3-setuptools \
-            python3-wheel python3-venv libssl-dev libffi-dev \
-            build-essential ccache zlib1g-dev
+            python3-wheel python3-venv libssl-dev libffi-dev build-essential ccache zlib1g-dev
 
       - name: Install Buildozer and Cython
         run: |
           python3 -m pip install --upgrade pip
           pip install --user buildozer cython
 
-      - name: Install Android SDK Build Tools using sdkmanager
-         run: |
-           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;34.0.0"
-           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools"     
+      - name: Install Android SDK Build Tools
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "build-tools;34.0.0"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platform-tools"
 
       - name: Build APK
         run: |
           export PATH=$PATH:~/.local/bin
           buildozer android debug
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
