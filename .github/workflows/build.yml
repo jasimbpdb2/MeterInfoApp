@@ -50,6 +50,9 @@ jobs:
             "ndk;26.1.10909125" --channel=3
 
       - name: Build APK
+
+        env:
+          JAVA_TOOL_OPTIONS: "--add-modules java.xml.bind"
         run: |
           sed -i 's/^android.api = .*/android.api = 35/' buildozer.spec
           sed -i 's/^#*android.build_tools = .*/android.build_tools = 35.0.0/' buildozer.spec
