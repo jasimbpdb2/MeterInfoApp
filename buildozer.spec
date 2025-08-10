@@ -37,3 +37,4 @@ android.minapi = 21
 
 # (str) Android entry point
 entrypoint = main.py
+android.build_tools_version = 34.0.0  
