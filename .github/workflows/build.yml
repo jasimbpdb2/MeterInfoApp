@@ -1,59 +1,66 @@
-name: Build Android APK
+name: Build Android APK (API 35)
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
 
-    - name: Set up Java 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: "temurin"
-        java-version: "17"
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          build-essential \
-          libffi-dev \
-          python3-dev \
-          libssl-dev \
-          git \
-          unzip \
-          zip \
-          openjdk-17-jdk
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v2
 
-    - name: Install Buildozer & Cython
-      run: |
-        pip install --upgrade pip
-        pip install cython buildozer
+      - name: Install Ubuntu dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip python3-pip \
+            libssl-dev libffi-dev build-essential ccache zlib1g-dev
 
-    - name: Set environment variables
-      run: |
-        echo "JAVA_TOOL_OPTIONS=--add-modules java.xml.bind" >> $GITHUB_ENV
-        echo "ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
-        echo "ANDROID_NDK_ROOT=$HOME/.buildozer/android/platform/android-ndk" >> $GITHUB_ENV
+      - name: Install Buildozer & Cython
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install --user cython
+          pip install --user git+https://github.com/kivy/buildozer.git
 
-    - name: Build APK
-      run: |
-        buildozer android debug
+      - name: Configure Android SDK & NDK
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager \
+            "platform-tools" \
+            "build-tools;35.0.0" \
+            "platforms;android-35" \
+            "ndk;27.0.12077973"
 
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: MeterInfo-APK
-        path: bin/*.apk
+      - name: Build APK
+        run: |
+          # Patch buildozer.spec for API 35
+          sed -i 's/^android.api = .*/android.api = 35/' buildozer.spec
+          sed -i 's/^android.build_tools = .*/android.build_tools = 35.0.0/' buildozer.spec
+          sed -i 's/^android.ndk = .*/android.ndk = 27.0.12077973/' buildozer.spec
+          sed -i 's|^android.sdk_path =.*|android.sdk_path = /usr/local/lib/android/sdk|' buildozer.spec
+          sed -i 's|^android.ndk_path =.*|android.ndk_path = /usr/local/lib/android/ndk/27.0.12077973|' buildozer.spec
+
+          export PATH="$HOME/.local/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
+          buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-35-app-debug-apk
+          path: bin/*.apk
