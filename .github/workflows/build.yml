@@ -54,6 +54,11 @@ jobs:
           sed -i 's/^android.api = .*/android.api = 35/' buildozer.spec
           sed -i 's/^#*android.build_tools = .*/android.build_tools = 35.0.0/' buildozer.spec
           sed -i 's/^#*android.ndk = .*/android.ndk = 26.1.10909125/' buildozer.spec
+          sed -i 's|^android.sdk_path =.*|android.sdk_path = '"$ANDROID_SDK_ROOT"'|' buildozer.spec
+          
+          export PATH="$HOME/.local/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
+          buildozer -v android debug
+
           
           export PATH="$HOME/.local/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
           buildozer -v android debug
