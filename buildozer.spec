@@ -30,7 +30,7 @@ fullscreen = 1
 android.api = 35
 android.sdk_path = %(ANDROID_SDK_ROOT)s
 android.ndk_path = %(ANDROID_NDK_ROOT)s
-android.build_tools = 34.0.0
+android.build_tools = 35.0.0
 
 # (str) Android NDK version to use
 android.ndk = 25b
