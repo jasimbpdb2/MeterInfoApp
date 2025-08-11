@@ -7,12 +7,11 @@ source.dir = .
 
 # API & Build Tools
 android.api = 36
-android.minapi = 23
+android.minapi = 21
 #android.build_tools = 35.0.0-rc2
 #android.ndk=26.1.10909125
 android.ndk_api = 25b
 android.sdk = 34
-
 accept_sdk_license = True
 # Remove ROOT substitutions — we'll set these in GitHub Actions env
 # android.sdk_path = %(ANDROID_SDK_ROOT)s   <-- REMOVE
