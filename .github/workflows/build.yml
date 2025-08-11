@@ -1,33 +1,37 @@
 name: Build APK with Buildozer (Auto SDK)
 
 on:
-  push:
-    branches: [main]
+
+push:
+
+branches: [ main]
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Build APK
-        uses: digreatbrian/buildozer-action@v2
-        with:
-          python-version: "3.11"
-          buildozer-cmd: |
-            buildozer -v android debug 2>&1 | tee build.log
-            ls -la bin/  # Verify APK exists
+build:
 
-      - name: Upload APK
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: ./bin/*.apk
+runs-on: ubuntu-22.04
 
-      - name: Upload logs if failed
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: build.log
+steps:
+
+- uses: actions/checkout@v4
+
+- name: Build APK
+
+uses: digreatbrian/buildozer-action@v2
+
+with:
+
+python-version: 3.11
+
+buildozer-cmd: buildozer -v android debug
+
+- name: Upload artifacts
+
+uses: actions/upload-artifact@v4
+
+with:
+
+name: package
+
+path: ./bin/*.apk
