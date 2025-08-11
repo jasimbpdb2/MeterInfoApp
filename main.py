@@ -19,7 +19,7 @@ Window.clearcolor = (1, 1, 1, 1)
 def get_text(field):
     if isinstance(field, dict) and "_text" in field:
         return field["_text"].strip()
-    return str(field).strip() if field else "N/A"
+    return str(field).strip() if field else ""
 
 def format_key(key):
     key = re.sub(r'([a-z])([A-Z])', r'\1 \2', key)
@@ -32,6 +32,7 @@ class SelectableTextInput(TextInput):
         self.selected = False
         self.multiline = False
         self.readonly = True
+        self.foreground_color = (0, 0, 0, 1)
 
     def on_touch_down(self, touch):
         if self.collide_point(*touch.pos):
@@ -165,30 +166,50 @@ class MeterInfoApp(App):
                 self.add_row("Error", "Invalid response or meter not found")
                 return
 
+            # Parse weird JSON format keyed by "1"
             json_part = response.text.split('1:', 1)[1]
-            data = json.loads(json_part)
+            data_all = json.loads(json_part)
+            data = data_all.get("1")
+            if not data:
+                self.add_row("Error", 'No data under key "1"')
+                return
 
-            self.add_row("Customer Info", "--------------------")
+            # Show Info Section: message, meterNo, customerNo
+            attr = data.get("mOrderData", {}).get("result", {}).get("_attributes", {})
+            self.add_row("Info", "--------------------")
+            self.add_row("Message", attr.get("message", ""))
+            self.add_row("Meter No", attr.get("meterNo", ""))
+            self.add_row("Customer No", attr.get("customerNo", ""))
+
+            # Show Customer Information
+            self.add_row("", "")
+            self.add_row("Customer Information", "--------------------")
             cust = data.get("mCustomerData", {}).get("result", {})
             for key, val in cust.items():
                 if key.lower() == "_attributes":
                     continue
                 self.add_row(format_key(key), get_text(val))
 
+            # Show Orders table (last 3 recharges)
             self.add_row("", "")
             self.add_row("Last 3 Recharge Info", "--------------------")
             orders = data.get("mOrderData", {}).get("result", {}).get("orders", {}).get("order", [])
+            if not isinstance(orders, list):
+                orders = [orders]  # Make it a list if single order
+
             for idx, order in enumerate(orders[:3]):
                 self.add_row(f"Recharge {idx + 1}", "")
                 for key, val in order.items():
                     if key.lower() == "_attributes":
                         continue
                     if key == "tariffFees":
+                        # Format tariff fees as joined string
+                        fees = []
                         for fee in val.get("tariffFee", []):
                             name = get_text(fee.get('itemName'))
-                            desc = get_text(fee.get('chargeDes'))
                             amount = get_text(fee.get('chargeAmount'))
-                            self.add_row(f"  {name}", f"{desc} = {amount}")
+                            fees.append(f"{name}: {amount}")
+                        self.add_row(format_key(key), ", ".join(fees))
                     else:
                         self.add_row(format_key(key), get_text(val))
 
