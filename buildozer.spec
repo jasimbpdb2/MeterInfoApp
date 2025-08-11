@@ -13,6 +13,7 @@ android.minapi = 23
 android.ndk_api = 25b
 android.sdk = 34
 
+accept_sdk_license = True
 # Remove ROOT substitutions — we'll set these in GitHub Actions env
 # android.sdk_path = %(ANDROID_SDK_ROOT)s   <-- REMOVE
 # android.ndk_path = %(ANDROID_NDK_ROOT)s   <-- REMOVE
