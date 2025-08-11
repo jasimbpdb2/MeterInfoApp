@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BPDB JSON Data Viewer</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h2 { margin-top: 30px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background-color: #f0f0f0; }
+  td:first-child { font-weight: bold; width: 200px; }
+</style>
+</head>
+<body>
+
+<h1>BPDB Meter Data</h1>
+<div id="info"></div>
+<div id="customer"></div>
+<div id="orders"></div>
+
+<script>
+// Fix broken JSON format
+function fixBrokenJson(text) {
+  let lines = text.trim().split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    lines[i] = lines[i].replace(/^(\d+):/, '"$1":');
+    if (i !== lines.length - 1) {
+      lines[i] = lines[i].replace(/,\s*$/, '') + ',';
+    }
+  }
+  let fixed = '{' + lines.join('\n') + '}';
+  fixed = fixed.replace(/UTF&#45;8/g, 'UTF-8');
+  return fixed;
+}
+
+// Helper to get _text or empty string for empty objects
+function getText(obj) {
+  if (obj === null || obj === undefined) return '';
+  if (typeof obj === 'object') {
+    if (Object.keys(obj).length === 0) return '';
+    if ('_text' in obj) return obj._text;
+    return JSON.stringify(obj);
+  }
+  return String(obj);
+}
+
+fetch('res.json')
+  .then(resp => {
+    if (!resp.ok) throw new Error('Failed to load JSON file: ' + resp.status);
+    return resp.text();
+  })
+  .then(text => {
+    const fixedText = fixBrokenJson(text);
+    let data;
+    try {
+      data = JSON.parse(fixedText);
+    } catch (e) {
+      document.body.innerHTML = '<pre>JSON parse error: ' + e.message + '\n\nFixed JSON preview:\n' + fixedText + '</pre>';
+      throw e;
+    }
+
+    // Ignore 0 key, get only 1
+    const one = data['1'];
+    if (!one) {
+      document.getElementById('info').textContent = 'No data found under key "1"';
+      return;
+    }
+
+    // Extract mOrderData and mCustomerData
+    const orderData = one.mOrderData;
+    const customerData = one.mCustomerData;
+
+    // Show top-level info message, meterNo, customerNo
+    const attr = orderData.result._attributes || {};
+    const infoDiv = document.getElementById('info');
+    infoDiv.innerHTML = `
+      <p><strong>Message:</strong> ${attr.message || ''}</p>
+      <p><strong>Meter No:</strong> ${attr.meterNo || ''}</p>
+      <p><strong>Customer No:</strong> ${attr.customerNo || ''}</p>
+    `;
+
+    // Show customer info as table
+    const customerDiv = document.getElementById('customer');
+    customerDiv.innerHTML = '<h2>Customer Information</h2>';
+
+    const custResult = customerData.result || {};
+    const table = document.createElement('table');
+    const tbody = document.createElement('tbody');
+
+    for (const key in custResult) {
+      if (!custResult.hasOwnProperty(key)) continue;
+      if (key === '_attributes') continue;
+
+      let val = getText(custResult[key]);
+
+      const tr = document.createElement('tr');
+
+      const tdKey = document.createElement('td');
+      tdKey.textContent = key;
+
+      const tdVal = document.createElement('td');
+      tdVal.textContent = val;
+
+      tr.appendChild(tdKey);
+      tr.appendChild(tdVal);
+
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    customerDiv.appendChild(table);
+
+    // Show orders in table
+    const ordersDiv = document.getElementById('orders');
+    ordersDiv.innerHTML = '<h2>Orders</h2>';
+
+    const orders = orderData.result.orders.order;
+    if (!orders || !Array.isArray(orders) || orders.length === 0) {
+      ordersDiv.innerHTML += '<p>No orders found.</p>';
+      return;
+    }
+
+    // Build table header from keys of first order
+    const orderTable = document.createElement('table');
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    // Use keys from first order
+    const firstOrder = orders[0];
+    const keys = Object.keys(firstOrder);
+    keys.forEach(key => {
+      let th = document.createElement('th');
+      th.textContent = key;
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    orderTable.appendChild(thead);
+
+    // Build table body rows
+    const tbodyOrders = document.createElement('tbody');
+    orders.forEach(order => {
+      const tr = document.createElement('tr');
+      keys.forEach(key => {
+        let td = document.createElement('td');
+        let val = order[key];
+
+        // If val is object with _text, show that text
+        if (val && typeof val === 'object' && '_text' in val) {
+          td.textContent = val._text;
+        }
+        // If val is nested object like tariffFees, render some summary text
+        else if (val && typeof val === 'object') {
+          if (key === 'tariffFees' && val.tariffFee && Array.isArray(val.tariffFee)) {
+            // Join itemName:chargeAmount
+            const fees = val.tariffFee.map(fee => {
+              const name = fee.itemName?._text || '';
+              const amount = fee.chargeAmount?._text || '';
+              return `${name}: ${amount}`;
+            }).join(', ');
+            td.textContent = fees;
+          } else {
+            td.textContent = JSON.stringify(val);
+          }
+        } else {
+          td.textContent = val !== undefined ? val : '';
+        }
+        tr.appendChild(td);
+      });
+      tbodyOrders.appendChild(tr);
+    });
+
+    orderTable.appendChild(tbodyOrders);
+    ordersDiv.appendChild(orderTable);
+
+  })
+  .catch(e => {
+    document.body.innerHTML = '<pre>Error: ' + e.message + '</pre>';
+  });
+</script>
+
+</body>
+</html>
