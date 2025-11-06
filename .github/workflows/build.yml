@@ -10,22 +10,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Step 1: Set up Java and ensure Android licenses are accepted
-      # This action automatically accepts licenses and sets up the environment
-      - name: Setup Android SDK and Accept Licenses
-        uses: android-actions/setup-android@v2
+      # --- NEW STEP ADDED HERE ---
+      - name: Accept Android SDK Licenses (workaround)
+        run: |
+          # Define a temporary Android home to download sdkmanager if needed
+          export ANDROID_HOME="/opt/android/sdk"
+          mkdir -p $ANDROID_HOME/cmdline-tools
 
-      # Step 2: Use the buildozer action to perform the build
-      # The buildozer action will use the SDK environment set up by the previous step
+          # Install command line tools if not present (handled by setup-android action usually, but good fallback)
+          # We manually force acceptance of all licenses using 'yes'
+          yes | sdkmanager --licenses
+          # ---------------------------
+
       - name: Build APK
+        # It's recommended to use an action that handles SDK setup explicitly first
+        # (See alternative approach below for a cleaner method)
         uses: digreatbrian/buildozer-action@v2
         with:
           python-version: 3.11
           buildozer-cmd: buildozer -v android debug
-          # Disable automatic SDK setup within the buildozer action 
-          # since we handled it in the previous step
-          setup-p4a: true 
-          setup-sdk: false 
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
