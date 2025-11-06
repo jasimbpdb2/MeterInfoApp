@@ -10,28 +10,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- NEW STEP ADDED HERE ---
-      - name: Accept Android SDK Licenses (workaround)
-        run: |
-          # Define a temporary Android home to download sdkmanager if needed
-          export ANDROID_HOME="/opt/android/sdk"
-          mkdir -p $ANDROID_HOME/cmdline-tools
+      # Step 1: Use an action specifically designed to setup the Android SDK
+      # This action installs the SDK tools and automatically accepts licenses.
+      - name: Setup Android SDK and Accept Licenses
+        uses: android-actions/setup-android@v3
 
-          # Install command line tools if not present (handled by setup-android action usually, but good fallback)
-          # We manually force acceptance of all licenses using 'yes'
-          yes | sdkmanager --licenses
-          # ---------------------------
-
-      - name: Build APK
-        # It's recommended to use an action that handles SDK setup explicitly first
-        # (See alternative approach below for a cleaner method)
-        uses: digreatbrian/buildozer-action@v2
+      # Step 2: Set up Python environment
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
           python-version: 3.11
-          buildozer-cmd: buildozer -v android debug
+
+      # Step 3: Run the build using the pre-configured environment
+      - name: Build APK with Buildozer
+        # It's better to manually install buildozer via pip and run the command
+        # if the custom action causes path issues.
+        run: |
+          pip install buildozer
+          buildozer -v android debug
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: package
           path: ./bin/*.apk
+
