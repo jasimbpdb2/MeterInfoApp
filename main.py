@@ -1,155 +1,60 @@
-import os
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.scrollview import ScrollView
-from kivy.uix.gridlayout import GridLayout
-from kivy.core.window import Window
-from kivy.metrics import dp
-from kivy.utils import get_color_from_hex
-import requests
-import json
-import urllib3
-import re
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-Window.clearcolor = (1, 1, 1, 1)
+def main():
+    """Main interactive interface"""
+    print("🚀 BPDB METER INFORMATION CHECKER")
+    print("═" * 40)
+    
+    while True:
+        print("\n🔧 Select Bill Type:")
+        print("1. Prepaid (12-digit meter)")
+        print("2. Postpaid (any digit meter)") 
+        print("3. Exit")
+        
+        choice = input("\nEnter your choice (1-3): ").strip()
+        
+        if choice == "3":
+            print("👋 Goodbye!")
+            break
+            
+        if choice not in ["1", "2"]:
+            print("❌ Invalid choice. Please enter 1, 2, or 3.")
+            continue
+        
+        bill_type = "prepaid" if choice == "1" else "postpaid"
+        
+        # Conditional input prompt based on bill type
+        if choice == "1":
+            print(f"\n📝 Enter {bill_type.upper()} Meter Number:")
+            meter_number = input("Meter Number: ").strip()
+        elif choice == "2":
+            print(f"\n📝 Enter {bill_type.upper()} Consumer Number:")
+            meter_number = input("Consumer Number: ").strip()
+        
+        is_valid, message = validate_meter(meter_number, bill_type)
+        if not is_valid:
+            print(f"❌ {message}")
+            continue
+        
+        print(f"\n🔄 Processing {bill_type.upper()} lookup...")
+        
+        try:
+            if bill_type == "prepaid":
+                result = fetch_prepaid_data(meter_number)
+                display_prepaid_result(result)
+            else:
+                result = fetch_postpaid_data(meter_number)
+                display_postpaid_result(result)
+                
+        except Exception as e:
+            print(f"❌ Unexpected error: {e}")
+        
+        continue_test = input("\n🔄 Test another meter? (y/n): ").strip().lower()
+        if continue_test != 'y':
+            print("👋 Goodbye!")
+            break
 
-def get_text(field):
-    if isinstance(field, dict) and "_text" in field:
-        return field["_text"].strip()
-    return str(field).strip() if field else ""
-
-def format_key(key):
-    key = re.sub(r'([a-z])([A-Z])', r'\1 \2', key)
-    return key.replace('_', ' ').title()
-
-class SelectableTextInput(TextInput):
-    def __init__(self, **kwargs):
-        super(SelectableTextInput, self).__init__(**kwargs)
-        self.background_color = (1, 1, 1, 1)
-        self.selected = False
-        self.multiline = False
-        self.readonly = True
-        self.foreground_color = (0, 0, 0, 1)
-
-    def on_touch_down(self, touch):
-        if self.collide_point(*touch.pos):
-            self.toggle_selection()
-            return True
-        return super(SelectableTextInput, self).on_touch_down(touch)
-
-    def toggle_selection(self):
-        self.selected = not self.selected
-        if self.selected:
-            self.background_color = (0.7, 0.7, 1, 1)  # Light blue when selected
-        else:
-            self.background_color = (1, 1, 1, 1)  # White when not selected
-
-class MeterInfoApp(App):
-    def build(self):
-        layout = BoxLayout(orientation='vertical', padding=10, spacing=10)
-
-        center_box = BoxLayout(orientation='vertical',
-                               size_hint=(None, None),
-                               height=dp(110),
-                               width=dp(300),
-                               pos_hint={'center_x': 0.5})
-
-        self.input = TextInput(
-            hint_text="Enter 12-digit Meter Number",
-            multiline=False,
-            size_hint=(None, None),
-            height=dp(50),
-            width=dp(280),
-            font_size=dp(22),
-            background_color=(1, 1, 1, 1),
-            halign='center')
-
-        btn = Button(
-            text="Check",
-            size_hint=(None, None),
-            height=dp(50),
-            width=dp(280),
-            font_size=dp(18),
-            background_color=get_color_from_hex('#4CAF50'),
-            background_normal='',
-            color=(1, 1, 1, 1))
-        btn.bind(on_press=self.check_meter)
-
-        center_box.add_widget(self.input)
-        center_box.add_widget(btn)
-
-        layout.add_widget(center_box)
-
-        # Add a clear selection button
-        self.clear_btn = Button(
-            text="Clear Selection",
-            size_hint=(None, None),
-            height=dp(40),
-            width=dp(150),
-            font_size=dp(14),
-            background_color=get_color_from_hex('#FF9800'),
-            background_normal='',
-            color=(1, 1, 1, 1),
-            pos_hint={'center_x': 0.5})
-        self.clear_btn.bind(on_press=self.clear_selection)
-        layout.add_widget(self.clear_btn)
-
-        # Scrollable table area
-        outer_scroll = ScrollView(do_scroll_x=1, do_scroll_y=1, size_hint=(1, 1))
-        self.table = GridLayout(cols=2,
-                                size_hint=(None, None),
-                                width=Window.width,
-                                size_hint_y=None,
-                                spacing=dp(2),
-                                padding=dp(4))
-        self.table.bind(minimum_height=self.table.setter('height'),
-                        minimum_width=self.table.setter('width'))
-
-        outer_scroll.add_widget(self.table)
-        layout.add_widget(outer_scroll)
-
-        return layout
-
-    def add_row(self, key, value):
-        key_widget = SelectableTextInput(text=key,
-                               size_hint_y=None,
-                               height=dp(40),
-                               size_hint_x=None,
-                               width=Window.width / 2,
-                               background_color=(0.95, 0.95, 0.95, 1),
-                               foreground_color=(0, 0, 0, 1))
-
-        value_widget = SelectableTextInput(text=value,
-                                 size_hint_y=None,
-                                 height=dp(40),
-                                 size_hint_x=None,
-                                 width=Window.width / 2,
-                                 background_color=(1, 1, 1, 1),
-                                 foreground_color=(0, 0, 0, 1))
-
-        self.table.add_widget(key_widget)
-        self.table.add_widget(value_widget)
-
-    def clear_selection(self, instance):
-        for child in self.table.children:
-            if isinstance(child, SelectableTextInput):
-                child.selected = False
-                child.background_color = (1, 1, 1, 1) if child.text.strip() != "--------------------" else (0.95, 0.95, 0.95, 1)
-
-    def check_meter(self, instance):
-        meter_no = self.input.text.strip()
-        self.table.clear_widgets()
-
-        if not meter_no:
-            self.add_row("Error", "Please enter a meter number")
-            return
-        if len(meter_no) != 12:
-            self.add_row("Error", "Meter number must be 12 digits")
-            return
-
+if __name__ == "__main__":
+    main(
         url = "https://web.bpdbprepaid.gov.bd/en/token-check"
         headers = {
             "accept": "text/x-component",
@@ -218,3 +123,4 @@ class MeterInfoApp(App):
 
 if __name__ == "__main__":
     MeterInfoApp().run()
+
