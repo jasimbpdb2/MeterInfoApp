@@ -1,5 +1,4 @@
-Name: Build APK with Buildozer (Auto SDK)
-
+name: Build APK with Buildozer (Auto SDK) # FIXED: Must be the first key with correct syntax
 on:
   push:
     branches: [main]
